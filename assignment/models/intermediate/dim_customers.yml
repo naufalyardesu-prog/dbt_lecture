@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Customer dimension with rental and payment summary."
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_name
+        data_tests:
+          - not_null
+      - name: total_rentals
+        data_tests:
+          - not_null
+      - name: lifetime_payment_total
+        data_tests:
+          - not_null

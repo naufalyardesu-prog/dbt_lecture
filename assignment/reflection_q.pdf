@@ -1,0 +1,5 @@
+1. Menurut Anda, apa manfaat membangun model data secara bertahap melalui staging → intermediate → mart dalam project dbt?
+    Menurut saya, membuat model data secara bertahap membuat data lebih rapi dan mudah dikelola. Setiap bagian punya fungsi masing-masing, jadi lebih mudah untuk mencari kesalahan dan melakukan perubahan.
+
+2. Apa tantangan yang Anda alami ketika membuat model dbt, dan bagaimana Anda mengatasinya selama proses pengerjaan?
+    Tantangan yang saya alami adalah masih bingung memahami penggunaan source() dan ref(), serta beberapa kali mengalami error saat konfigurasi dbt dan Docker. Saya mengatasinya dengan membaca pesan error, mengecek kembali file dan struktur model, lalu mencoba menjalankan dbt debug, dbt run, dan dbt test sampai berhasil.

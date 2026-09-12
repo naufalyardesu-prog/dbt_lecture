@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: mart_film_performance
+    description: "Film performance metrics including rentals and revenue."
+    columns:
+      - name: film_id
+        data_tests:
+          - unique
+          - not_null

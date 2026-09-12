@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: mart_customer_performance
+    description: "Customer performance metrics."
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null

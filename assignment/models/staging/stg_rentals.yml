@@ -1,0 +1,6 @@
+models: 
+  - name: stg_rentals
+    description: "One row per rental."
+    columns:
+      - name: rental_id
+        data_tests: [unique, not_null]

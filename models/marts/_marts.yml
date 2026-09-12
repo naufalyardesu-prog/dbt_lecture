@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Customer dimension — identity, location, and lifetime value."
+    columns:
+      - name: customer_id
+        description: "Primary key."
+        data_tests: [unique, not_null]
+      - name: lifetime_value
+        data_tests: [not_null]
+
+  - name: dim_films
+    description: "Film dimension — catalogue enriched with category and rating label."
+    columns:
+      - name: film_id
+        data_tests: [unique, not_null]
+
+  - name: fct_payments
+    description: "One row per payment — the incrementally-built payments fact."
+    columns:
+      - name: payment_id
+        data_tests: [unique, not_null]
+      - name: amount
+        data_tests: [not_null]

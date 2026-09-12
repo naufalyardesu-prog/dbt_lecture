@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: mart_daily_revenue
+    description: "Daily revenue and payment metrics by store."
+    columns:
+      - name: paid_date
+        data_tests:
+          - not_null
+      - name: store_id
+        data_tests:
+          - not_null

@@ -1,0 +1,13 @@
+models:
+  - name: stg_stores
+    description: "One cleaned row per store."
+
+    columns:
+      - name: store_id
+        data_tests: [unique, not_null]
+
+      - name: manager_staff_id
+        data_tests: [not_null]
+
+      - name: address_id
+        data_tests: [not_null]

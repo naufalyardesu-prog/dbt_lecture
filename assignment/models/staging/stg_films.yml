@@ -1,0 +1,11 @@
+models:
+  - name: stg_films
+    description: "One cleaned row per film."
+    columns:
+      - name: film_id
+        data_tests: [unique, not_null]
+      - name: rating
+        description: "MPAA rating."
+        data_tests:
+          - accepted_values:
+              values: ['G', 'PG', 'PG-13', 'R', 'NC-17']

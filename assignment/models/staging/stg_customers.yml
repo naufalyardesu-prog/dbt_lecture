@@ -1,0 +1,7 @@
+models:
+  - name: stg_customers
+    description: "One cleaned row per customer, with a stitched full_name."
+    columns:
+      - name: customer_id
+        description: "Primary key."
+        data_tests: [unique, not_null]

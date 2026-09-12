@@ -1,0 +1,94 @@
+version: 2
+
+# ---------------------------------------------------------------------
+# SOURCES — the Pagila sample database, pre-loaded into the `public`
+# schema by our Docker init scripts. Declaring them here lets dbt draw
+# them into the DAG and reference them as {{ source('pagila', 'rental') }}.
+# ---------------------------------------------------------------------
+sources:
+  - name: pagila
+    description: "Pagila — the standard Postgres sample DB (a DVD rental store)."
+    schema: public
+    tables:
+      - name: customer
+      - name: film
+      - name: category
+      - name: film_category
+      - name: inventory
+      - name: rental
+      - name: payment
+      - name: address
+      - name: city
+      - name: country
+
+# ---------------------------------------------------------------------
+# MODELS — descriptions (feed the docs site) + generic tests
+# ---------------------------------------------------------------------
+models:
+  - name: stg_customers
+    description: "One cleaned row per customer, with a stitched full_name."
+    columns:
+      - name: customer_id
+        description: "Primary key."
+        data_tests: [unique, not_null]
+
+  - name: stg_films
+    description: "One cleaned row per film."
+    columns:
+      - name: film_id
+        data_tests: [unique, not_null]
+      - name: rating
+        description: "MPAA rating."
+        data_tests:
+          - accepted_values:
+              values: ['G', 'PG', 'PG-13', 'R', 'NC-17']
+
+  - name: stg_payments
+    description: "One row per payment."
+    columns:
+      - name: payment_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        description: "Must point at a real customer."
+        data_tests:
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+  - name: stg_rentals
+    description: "One row per rental."
+    columns:
+      - name: rental_id
+        data_tests: [unique, not_null]
+
+  - name: stg_addresses
+    description: "One cleaned row per address."
+    columns:
+      - name: address_id
+        data_tests: [unique, not_null]
+
+  - name: stg_cities
+    description: "One cleaned row per city."
+    columns:
+      - name: city_id
+        data_tests: [unique, not_null]
+
+  - name: stg_countries
+    description: "One cleaned row per country."
+    columns:
+      - name: country_id
+        data_tests: [unique, not_null]
+
+  - name: stg_film_categories
+    description: "Bridge table linking films to categories."
+    columns:
+      - name: film_id
+        data_tests: [not_null]
+      - name: category_id
+        data_tests: [not_null]
+
+  - name: stg_categories
+    description: "One cleaned row per category label."
+    columns:
+      - name: category_id
+        data_tests: [unique, not_null]

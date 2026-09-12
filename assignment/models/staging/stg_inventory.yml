@@ -1,0 +1,13 @@
+models:
+  - name: stg_inventory
+    description: "One cleaned row per inventory item."
+
+    columns:
+      - name: inventory_id
+        data_tests: [unique, not_null]
+
+      - name: film_id
+        data_tests: [not_null]
+
+      - name: store_id
+        data_tests: [not_null]

@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: dim_films
+    description: "Film dimension with category, rating, inventory, and rental performance."
+    columns:
+      - name: film_id
+        data_tests:
+          - unique
+          - not_null
+      - name: title
+        data_tests:
+          - not_null
+      - name: rating
+        data_tests:
+          - not_null
+      - name: inventory_count
+        data_tests:
+          - not_null
+      - name: times_rented
+        data_tests:
+          - not_null

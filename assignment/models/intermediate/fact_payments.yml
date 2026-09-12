@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: fact_payments
+    description: "Payment fact table enriched with customer, store, and film information."
+    columns:
+      - name: payment_id
+        data_tests:
+          - unique
+          - not_null
+      - name: paid_at
+        data_tests:
+          - not_null
+      - name: customer_id
+        data_tests:
+          - not_null
+      - name: rental_id
+        data_tests:
+          - not_null
+      - name: amount
+        data_tests:
+          - not_null

@@ -1,0 +1,91 @@
+services:
+  postgres:
+    image: postgres:18   # Pagila's current dump uses uuidv7() (Postgres 18+)
+    container_name: dbt_class_pg
+    environment:
+      POSTGRES_USER: dbt
+      POSTGRES_PASSWORD: dbt
+      POSTGRES_DB: analytics
+    ports:
+      - "15432:5432"   # host port avoids clashing with local Postgres
+    volumes:
+      # Postgres 18 images store data under /var/lib/postgresql (versioned subdir)
+      - pgdata:/var/lib/postgresql
+      # Any .sql here runs once, on first boot, to load the Pagila "raw" layer.
+      - ./docker/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbt -d analytics"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks: [dbt_class_net]
+
+  # Browse Postgres in the browser with DbGate — modern data browser, SQL editor,
+  # and ER diagrams. Opens straight to a pre-defined "Pagila" connection (no login).
+  dbgate:
+    image: dbgate/dbgate
+    container_name: dbt_class_dbgate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "15424:3000"   # http://localhost:15424
+    environment:
+      CONNECTIONS: pagila
+      LABEL_pagila: "Pagila (dbt_class)"
+      SERVER_pagila: postgres
+      USER_pagila: dbt
+      PASSWORD_pagila: dbt
+      PORT_pagila: "5432"
+      ENGINE_pagila: postgres@dbgate-plugin-postgres
+    volumes:
+      - dbgate-data:/root/.dbgate
+    networks: [dbt_class_net]
+
+  # dbt docs site — lineage graph + model/column docs at http://localhost:15480
+  dbt-docs:
+    build: ./docker/dbt
+    container_name: dbt_class_docs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DBT_PROFILES_DIR: /usr/app
+      DBT_HOST: postgres
+      DBT_PORT: 5432
+    volumes:
+      - .:/usr/app
+    working_dir: /usr/app
+    ports:
+      - "15480:8080"   # http://localhost:15480
+    command: >
+      bash -c "dbt docs generate && exec dbt docs serve --host 0.0.0.0 --port 8080"
+    networks: [dbt_class_net]
+
+  # dbt Core itself, containerized. Not started by `docker compose up`
+  # (it's behind a profile); you invoke it on demand with `docker compose run`.
+  dbt:
+    build: ./docker/dbt
+    profiles: ["dbt"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DBT_PROFILES_DIR: /usr/app   # use the profiles.yml in the project
+      DBT_HOST: postgres           # reach Postgres over the compose network
+      DBT_PORT: 5432               # internal compose port (host uses 15432)
+    volumes:
+      - .:/usr/app                 # live-mount the project
+      - ./sandbox:/sandbox         # scratch for the `dbt init` demo — mounted to host,
+                                   # git-ignored, and OUTSIDE /usr/app so `dbt init`
+                                   # doesn't detect the parent project and refuse to scaffold
+    working_dir: /usr/app
+    networks: [dbt_class_net]
+
+volumes:
+  pgdata: {}
+  dbgate-data: {}
+
+networks:
+  dbt_class_net:
+    name: dbt_class_net
